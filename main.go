@@ -4,6 +4,7 @@ import (
 	"flag"
 	"github.com/io-developer/prom-smartctl-exporter/exporter"
 	"github.com/prometheus/client_golang/prometheus"
+        "github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"net/http"
 )
@@ -18,12 +19,13 @@ func main() {
 
 	prometheus.MustRegister(exporter.New())
 
-	http.Handle(*metricsPath, prometheus.Handler())
+	http.Handle(*metricsPath, promhttp.Handler())
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, *metricsPath, http.StatusMovedPermanently)
 	})
 
 	log.Printf("starting exporter on %q", *listenAddr)
+        log.Printf("new!")
 
 	if err := http.ListenAndServe(*listenAddr, nil); err != nil {
 		log.Fatalf("cannot start exporter: %s", err)
